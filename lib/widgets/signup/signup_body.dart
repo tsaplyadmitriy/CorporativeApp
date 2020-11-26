@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lipsar_app/api_requests/api_requests.dart';
 import 'package:lipsar_app/components/rounded_button.dart';
 import 'package:lipsar_app/components/rounded_input_field.dart';
+import 'package:lipsar_app/entities/user_entity.dart';
+import 'package:lipsar_app/entities/user_session.dart';
 
 
 
@@ -16,6 +19,10 @@ class _SignUpBody extends State<SignUpBody>{
 
 
   bool checkedValue=false;
+  String nameSurname = "DefaultName";
+  String phone = "+7 (111) 874 37 54";
+  String email = "e.mail.mail.ru";
+  String password = "password";
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -39,6 +46,11 @@ class _SignUpBody extends State<SignUpBody>{
           RoundedInputField(
 
             hintText: "ФИО",
+            onChanged: (name){
+              nameSurname = name;
+
+
+            },
             keyboard: TextInputType.visiblePassword,
             width: 0.85,
             maxHeight: 0.07,
@@ -52,6 +64,9 @@ class _SignUpBody extends State<SignUpBody>{
             width: 0.85,
             maxHeight: 0.07,
             maxCharacters: 30,
+            onChanged: (phone){
+              this.phone = phone;
+            },
 
           ),
 
@@ -62,6 +77,9 @@ class _SignUpBody extends State<SignUpBody>{
             width: 0.85,
             maxHeight: 0.07,
             maxCharacters: 30,
+            onChanged: (email){
+              this.email = email;
+            },
 
           ),
           RoundedInputField(
@@ -71,6 +89,10 @@ class _SignUpBody extends State<SignUpBody>{
             width: 0.85,
             maxHeight: 0.07,
             maxCharacters: 30,
+            onChanged: (password){
+
+              this.password = password;
+            },
 
           ),
           RoundedInputField(
@@ -107,8 +129,10 @@ class _SignUpBody extends State<SignUpBody>{
             text: "ВОЙТИ",
             textColor: Colors.white,
 
-            press: (){
-
+            press: () async{
+                UserEntity entity = await APIRequests().signUpUser(this.email,
+                    "0", this.phone, this.nameSurname, this.password);
+                print("phone: "+entity.phone);
 
             },
           ),

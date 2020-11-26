@@ -2,15 +2,18 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lipsar_app/api_requests/api_requests.dart';
 import 'package:lipsar_app/components/rounded_button.dart';
 import 'package:lipsar_app/components/rounded_input_field.dart';
 import 'package:lipsar_app/constants.dart';
+import 'package:lipsar_app/entities/user_entity.dart';
+import 'package:lipsar_app/entities/user_session.dart';
 import 'package:lipsar_app/widgets/signup/signup_screen.dart';
 
 class LoginBody extends StatelessWidget{
 
-  String phone = "";
-  String password = "";
+  String phone = "DefaultPhone";
+  String password = "DefaultPassword";
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +58,10 @@ class LoginBody extends StatelessWidget{
             text: "ВОЙТИ",
             textColor: Colors.white,
 
-            press: (){
+            press: () async{
 
-
+              UserSession userSession = await APIRequests().loginUser(this.phone, this.password);
+              print("token: "+userSession.token);
             },
           ),
 

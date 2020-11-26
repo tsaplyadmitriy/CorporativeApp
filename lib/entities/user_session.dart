@@ -7,8 +7,8 @@ class UserSession{
 
   factory UserSession.fromJson(Map<String,dynamic> json){
     return new UserSession(
-    token:json['accessToken'],
-     date:json['expirationDate']
+    token:json['accessToken'].toString(),
+     date:json['expirationDate'].toString()
   );
 
 

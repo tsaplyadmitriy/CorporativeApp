@@ -21,6 +21,7 @@ class APIRequests {
         headers:{'Content-type':'application/json'},
         body:jsonEncode({'password': password,'phone':phone}));
 
+    print(response.body);
     final responseJson = jsonDecode(response.body);
 
     return UserSession.fromJson(responseJson);
@@ -30,7 +31,7 @@ class APIRequests {
 
   Future<UserEntity> signUpUser(String email, String id, String phone, String name,String password)async {
 
-    var url = constants.baseUrl+" /api/v1/auth/register";
+    var url = constants.baseUrl+"/api/v1/auth/register";
     var response = await http.post(url,
         headers:{'Content-type':'application/json'},
         body:jsonEncode({'password': password,'phone':phone,'id':id,'email':email,'name':name}));
