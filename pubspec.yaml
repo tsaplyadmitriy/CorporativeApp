@@ -68,10 +68,14 @@ flutter:
 
 
   fonts:
-    - family: Roboto
+    - family: ProductSans
       fonts:
-        - asset: android/assets/fonts/Roboto-Bold.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+        - asset: android/assets/fonts/ProductSans-Regular.ttf
+        - asset: android/assets/fonts/ProductSans-Bold.ttf
+          weight: 700
+        - asset: android/assets/fonts/ProductSans-Italic.ttf
+          style: italic
+
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

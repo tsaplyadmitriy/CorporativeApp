@@ -14,13 +14,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        fontFamily: 'Roboto',
+        fontFamily: 'ProductSans',
 
         textTheme: TextTheme(
         headline1: TextStyle(
           color: Colors.black,
           fontSize: constants.bigTextSize,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w700,
          ),
           bodyText1: TextStyle(
             color: Colors.black,
@@ -44,8 +44,8 @@ class MyApp extends StatelessWidget {
 
           ),
           headline4: TextStyle(
-            color: constants.kBackgroundColor,
-            fontSize: 15,
+            color: Colors.black,
+            fontSize: 12,
           ),
           headline5: TextStyle(
             color: Colors.black,
@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
         ),
 
         primaryColor: constants.kPrimaryColor,
-        accentColor: constants.kBackgroundColor,
+        accentColor: constants.kPrimaryColor,
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),

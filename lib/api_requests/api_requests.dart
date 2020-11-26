@@ -28,7 +28,7 @@ class APIRequests {
 
   }
 
-  Future<UserEntity> signUpuser(String email, String id, String phone, String name,String password)async {
+  Future<UserEntity> signUpUser(String email, String id, String phone, String name,String password)async {
 
     var url = constants.baseUrl+" /api/v1/auth/register";
     var response = await http.post(url,

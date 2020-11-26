@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lipsar_app/components/rounded_button.dart';
 import 'package:lipsar_app/components/rounded_input_field.dart';
 import 'package:lipsar_app/constants.dart';
+import 'package:lipsar_app/widgets/signup/signup_screen.dart';
 
 class LoginBody extends StatelessWidget{
 
@@ -15,7 +16,7 @@ class LoginBody extends StatelessWidget{
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.only(top: size.height*0.02),
+      padding: EdgeInsets.only(top: size.height*0.04),
      height: double.maxFinite,
       child: Column(
 
@@ -78,7 +79,7 @@ class LoginBody extends StatelessWidget{
                       .headline3,)
               ))
           ),
-          SizedBox(height: size.height*0.01,),
+          SizedBox(height: size.height*0.015,),
           Align(
 
               alignment: Alignment.centerLeft,
@@ -88,7 +89,10 @@ class LoginBody extends StatelessWidget{
                   child:
                   InkWell(
                     onTap: (){
-
+                        Navigator.push(context,MaterialPageRoute(
+                          builder: (context) => SignUpScreen()
+                         )
+                        );
 
                     },
                   child:Text("Регистрация",
