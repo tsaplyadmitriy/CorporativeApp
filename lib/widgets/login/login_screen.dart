@@ -13,6 +13,7 @@ class LoginScreen extends StatelessWidget{
   Widget build(BuildContext context) {
 
     return BaseScreen(
+      isReturnable: false,
       child: LoginBody(),
     );
   }

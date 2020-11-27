@@ -5,22 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:lipsar_app/api_requests/api_requests.dart';
 import 'package:lipsar_app/components/rounded_button.dart';
 import 'package:lipsar_app/components/rounded_input_field.dart';
+import 'package:lipsar_app/components/rounded_password_field.dart';
+import 'package:lipsar_app/components/rounded_phone_field.dart';
 import 'package:lipsar_app/constants.dart';
 import 'package:lipsar_app/entities/user_entity.dart';
 import 'package:lipsar_app/entities/user_session.dart';
+import 'package:lipsar_app/widgets/recovery/recovery_screen.dart';
 import 'package:lipsar_app/widgets/signup/signup_screen.dart';
 
 class LoginBody extends StatelessWidget{
 
   String phone = "DefaultPhone";
   String password = "DefaultPassword";
-
+  List<FocusNode> nodes = [FocusNode(),FocusNode()];
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
       padding: EdgeInsets.only(top: size.height*0.04),
      height: double.maxFinite,
+
+      child: SingleChildScrollView(
+
       child: Column(
 
         children: <Widget>[
@@ -34,22 +40,25 @@ class LoginBody extends StatelessWidget{
 
 
           SizedBox(height: size.height*0.1,),
-          RoundedInputField(
+          RoundedPhoneField(
 
             hintText: "Телефон",
             keyboard: TextInputType.phone,
             width: 0.85,
             maxHeight: 0.07,
             maxCharacters: 30,
+            next: nodes[1],
+            current: nodes[0],
 
           ),
-          RoundedInputField(
+          RoundedPasswordField(
 
             hintText: "Пароль",
             keyboard: TextInputType.visiblePassword,
             width: 0.85,
             maxHeight: 0.07,
             maxCharacters: 30,
+            current: nodes[1],
 
           ),
 
@@ -73,6 +82,10 @@ class LoginBody extends StatelessWidget{
                 child:
                 InkWell(
                 onTap: (){
+                  Navigator.push(context,MaterialPageRoute(
+                      builder: (context) => RecoveryScreen()
+                  )
+                  );
 
 
                 },
@@ -109,7 +122,7 @@ class LoginBody extends StatelessWidget{
 
         ],
 
-      ),
+      )),
 
     );
   }

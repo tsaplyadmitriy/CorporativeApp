@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:lipsar_app/widgets/base_screen.dart';
+import 'package:lipsar_app/widgets/recovery/recovery_body.dart';
 import 'package:lipsar_app/widgets/signup/signup_body.dart';
 
-class SignUpScreen extends StatelessWidget{
+class RecoveryScreen extends StatelessWidget{
 
 
   @override
@@ -10,7 +11,7 @@ class SignUpScreen extends StatelessWidget{
 
     return new BaseScreen(
       isReturnable: true,
-      child: new SignUpBody(),
+      child: new RecoveryBody(),
     );
 
   }

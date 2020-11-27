@@ -51,7 +51,10 @@ class MyApp extends StatelessWidget {
             color: Colors.black,
             fontSize: 20,
           ),
-
+          headline6: TextStyle(
+            color: Colors.red,
+            fontSize: 12,
+          ),
         ),
 
         primaryColor: constants.kPrimaryColor,

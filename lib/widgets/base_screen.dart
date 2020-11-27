@@ -8,13 +8,18 @@ class BaseScreen extends StatelessWidget{
 
 
   final Widget child;
+  final bool isReturnable ;
 
-  const BaseScreen({this.child});
+  const BaseScreen({this.child,this.isReturnable});
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
+    return
+     new WillPopScope(
+        onWillPop: () async => isReturnable,
+      child:
+      Scaffold(
         appBar: AppBar(
           centerTitle: true,
           toolbarHeight: size.height*0.08,
@@ -37,7 +42,7 @@ class BaseScreen extends StatelessWidget{
 
           ),),
         body:child
-    );
+    ));
   }
 
 

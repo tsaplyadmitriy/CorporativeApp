@@ -11,41 +11,62 @@ class NumberTextInputFormatter extends TextInputFormatter {
     final int newTextLength = newValue.text.length;
     int selectionIndex = newValue.selection.end;
     int usedSubstringIndex = 0;
+    String temp = newValue.text;
+    bool isDeleted = (newTextLength-oldValue.text.length)<0;
     final StringBuffer newText = StringBuffer();
-    newText.clear();
-    if (newTextLength >= 1) {
-      newText.write('(');
-      if (newValue.selection.end >= 1)
-        selectionIndex++;
+    if(newTextLength==1 && !isDeleted){
+
+      temp = "+7 ("+temp;
+    }else{
+    //  temp = temp.substring(2,temp.length);
     }
-    if (newTextLength >= 4) {
-      newText.write(newValue.text.substring(0, usedSubstringIndex = 3) + ') ');
-      if (newValue.selection.end >= 3)
-        selectionIndex += 2;
+
+    if(newTextLength==7 && !isDeleted){
+      temp = temp.substring(0,7)+") "+temp.substring(6,temp.length);
     }
-    if (newTextLength >= 7) {
-      newText.write(newValue.text.substring(3, usedSubstringIndex = 6) + '-');
-      if (newValue.selection.end >= 6)
-        selectionIndex++;
+    if(newTextLength==8 && isDeleted){
+      temp = temp.substring(0,6);
     }
-    if (newTextLength >= 11) {
-      newText.write(newValue.text.substring(6, usedSubstringIndex = 10) + ' ');
-      if (newValue.selection.end >= 10)
-        selectionIndex++;
+
+    if(newTextLength==10 && !isDeleted){
+      temp = temp.substring(0,10)+" "+temp.substring(10,temp.length);
     }
-    // Dump the rest.
-    if (newTextLength >= usedSubstringIndex)
-      newText.write(newValue.text.substring(usedSubstringIndex));
+    if(newTextLength==10 && isDeleted){
+      temp = temp.substring(0,9);
+    }
+    if(newTextLength==13 && !isDeleted){
+      temp = temp.substring(0,12)+" "+temp.substring(12,temp.length);
+    }
+    if(newTextLength==13 && isDeleted){
+      temp = temp.substring(0,12);
+    }
+    if(newTextLength==15 && !isDeleted){
+      temp = temp.substring(0,15)+" "+temp.substring(15,temp.length);
+    }
+    if(newTextLength==15 && isDeleted){
+      temp = temp.substring(0,14);
+    }
+
+
+    print("temp"+temp);
+
+    if(newTextLength<=18){
+      newText.write(temp);
+    }else{
+      newText.write(oldValue.text);
+    }
+
+
     return TextEditingValue(
       text: newText.toString(),
-      selection: TextSelection.collapsed(offset: selectionIndex),
+      selection: TextSelection.collapsed(offset: temp.length),
     );
   }
 }
 final _mobileFormatter = NumberTextInputFormatter();
 
 
-class RoundedInputField extends StatelessWidget {
+class RoundedPhoneField extends StatelessWidget {
   final String hintText;
 
   final int exactLines;
@@ -57,7 +78,7 @@ class RoundedInputField extends StatelessWidget {
   final TextInputType keyboard;
   final double maxHeight;
   final int maxCharacters;
-  const RoundedInputField({
+  const RoundedPhoneField({
     Key key,
     this.hintText,
     this.next,
@@ -68,7 +89,7 @@ class RoundedInputField extends StatelessWidget {
     this.exactLines = 1,
     this.width = 0.8,
     this.maxHeight = 0.1,
-    this.maxCharacters = 50,
+    this.maxCharacters = 18,
   }) : super(key: key);
 
   @override
@@ -77,13 +98,16 @@ class RoundedInputField extends StatelessWidget {
     return Container(
       width: size.width * width,
       child: TextFieldContainer(
+
         child: ConstrainedBox(
 
           constraints: BoxConstraints(
 
             maxHeight: size.height * maxHeight,
           ),
-          child: TextFormField(
+          child:
+          TextFormField(
+
             keyboardType: keyboard,
             focusNode: current,
             textInputAction: TextInputAction.next,
@@ -91,10 +115,11 @@ class RoundedInputField extends StatelessWidget {
               _fieldFocusChange(context,current,next);
             },
             inputFormatters: <TextInputFormatter>[
-             //_mobileFormatter
+             _mobileFormatter
             ],
             maxLines: resizable ? null : exactLines,
             onChanged: onChanged,
+
             decoration: InputDecoration(
 
               hintStyle: Theme.of(context).textTheme.headline2,
@@ -110,8 +135,8 @@ class RoundedInputField extends StatelessWidget {
 
   _fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
     if(nextFocus!=null){
-    currentFocus.unfocus();
-    FocusScope.of(context).requestFocus(nextFocus);
+      currentFocus.unfocus();
+      FocusScope.of(context).requestFocus(nextFocus);
     }else{
 
       currentFocus.unfocus();
