@@ -22,6 +22,8 @@ environment:
 
 dependencies:
   flutter_svg: ^0.19.0
+  async_loader: ^0.1.1
+  url_launcher: ^5.7.6
   rest_data: ^0.3.1
   json_serializable: ^3.5.0
   flutter:

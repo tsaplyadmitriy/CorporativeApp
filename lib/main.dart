@@ -55,6 +55,7 @@ class MyApp extends StatelessWidget {
             color: Colors.red,
             fontSize: 12,
           ),
+
         ),
 
         primaryColor: constants.kPrimaryColor,

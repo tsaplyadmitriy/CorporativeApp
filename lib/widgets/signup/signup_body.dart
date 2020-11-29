@@ -7,6 +7,7 @@ import 'package:lipsar_app/components/rounded_password_field.dart';
 import 'package:lipsar_app/components/rounded_phone_field.dart';
 import 'package:lipsar_app/entities/user_entity.dart';
 import 'package:lipsar_app/entities/user_session.dart';
+import 'package:lipsar_app/widgets/confirm/confirm_screen.dart';
 import 'package:lipsar_app/widgets/login/login_screen.dart';
 
 
@@ -167,7 +168,7 @@ class _SignUpBody extends State<SignUpBody>{
                 }
               }
 
-              if(phone.length<18){
+              if(phone.length<17){
                 if(!isError){
                   errorLabel +="Убедитесь, что вы правильно указали телефон";
                   isError = true;
@@ -211,9 +212,28 @@ class _SignUpBody extends State<SignUpBody>{
 
                 if(!isError ){
                   if(checkedValue){
-                        UserEntity entity = await APIRequests().signUpUser(this.email,
-                            "0", this.phone, this.nameSurname, this.password);
-                        print("phone: "+entity.phone);
+
+
+                    UserSession entity = await APIRequests().signUpUser(this.email,
+                        this.phone, this.nameSurname, this.password);
+                    print(entity.token);
+
+                    if(entity.respcode==409){
+                      errorLabel += "Аккаунт с таким телефоном уже существует";
+                    }else if(entity.respcode==201) {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) =>
+                              ConfirmScreen(
+                                email: this.email,
+                                nameSurname: this.nameSurname,
+                                password: this.password,
+                                phone: this.phone,
+                                token: entity.token,
+                              )
+                      )
+                      );
+                    }
+                        // print("phone: "+entity.phone);
                     }
                   else{
                     errorLabel += "Необходимо дать согласие на обратоку персональных данных";

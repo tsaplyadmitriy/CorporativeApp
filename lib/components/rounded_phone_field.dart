@@ -8,7 +8,7 @@ class NumberTextInputFormatter extends TextInputFormatter {
       TextEditingValue oldValue,
       TextEditingValue newValue
       ) {
-    final int newTextLength = newValue.text.length;
+    int newTextLength = newValue.text.length;
     int selectionIndex = newValue.selection.end;
     int usedSubstringIndex = 0;
     String temp = newValue.text;
@@ -16,50 +16,70 @@ class NumberTextInputFormatter extends TextInputFormatter {
     final StringBuffer newText = StringBuffer();
     if(newTextLength==1 && !isDeleted){
 
-      temp = "+7 ("+temp;
+      temp = "8 ("+temp;
+      selectionIndex+=3;
     }else{
     //  temp = temp.substring(2,temp.length);
     }
 
-    if(newTextLength==7 && !isDeleted){
-      temp = temp.substring(0,7)+") "+temp.substring(6,temp.length);
+    newTextLength = selectionIndex;
+
+
+    if(newTextLength==1 && isDeleted ){
+      selectionIndex-=2;
+      temp = temp.substring(1,temp.length);
     }
-    if(newTextLength==8 && isDeleted){
-      temp = temp.substring(0,6);
+    print(selectionIndex.toString()+"/"+newTextLength.toString());
+    if(newTextLength==6 && !isDeleted){
+      temp = temp.substring(0,6)+") "+temp.substring(6,temp.length);
+      selectionIndex+=2;
+    }
+    if(newTextLength==7 && isDeleted ){
+      selectionIndex-=2;
+      temp = temp.substring(0,5)+temp.substring(7,temp.length);
     }
 
-    if(newTextLength==10 && !isDeleted){
-      temp = temp.substring(0,10)+" "+temp.substring(10,temp.length);
+    if(newTextLength==11 && !isDeleted){
+      temp = temp.substring(0,11)+" "+temp.substring(11,temp.length);
+      selectionIndex+=1;
     }
     if(newTextLength==10 && isDeleted){
-      temp = temp.substring(0,9);
+      //selectionIndex-=1;
+      temp = temp.substring(0,10)+temp.substring(11,temp.length);
     }
-    if(newTextLength==13 && !isDeleted){
-      temp = temp.substring(0,12)+" "+temp.substring(12,temp.length);
+    if(newTextLength==12 && !isDeleted){
+      temp = temp.substring(0,11)+" "+temp.substring(11,temp.length);
+      selectionIndex+=1;
     }
-    if(newTextLength==13 && isDeleted){
-      temp = temp.substring(0,12);
+    if(newTextLength==11 && isDeleted){
+      selectionIndex-=1;
+      temp = temp.substring(0,10)+temp.substring(11,temp.length);
     }
-    if(newTextLength==15 && !isDeleted){
-      temp = temp.substring(0,15)+" "+temp.substring(15,temp.length);
+    if(newTextLength==14 && !isDeleted){
+      temp = temp.substring(0,14)+" "+temp.substring(14,temp.length);
+      selectionIndex+=1;
     }
-    if(newTextLength==15 && isDeleted){
-      temp = temp.substring(0,14);
+    if(newTextLength==14 && isDeleted){
+      selectionIndex-=1;
+      temp = temp.substring(0,13)+temp.substring(14,temp.length);
     }
+     //selectionIndex = newValue.selection.end;
+    if(newTextLength==1 && !isDeleted ){
 
-
+      temp = temp.substring(0,1)+" "+temp.substring(1,temp.length);
+    }
     print("temp"+temp);
 
-    if(newTextLength<=18){
+    if(newValue.text.length<=17){
       newText.write(temp);
     }else{
       newText.write(oldValue.text);
     }
 
-
+    print("select"+selectionIndex.toString());
     return TextEditingValue(
       text: newText.toString(),
-      selection: TextSelection.collapsed(offset: temp.length),
+      selection: TextSelection.collapsed(offset: (!isDeleted)?selectionIndex:selectionIndex),
     );
   }
 }

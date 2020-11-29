@@ -2,15 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lipsar_app/components/textfield_container.dart';
 
+class PinTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue
+      ) {
+    final int newTextLength = newValue.text.length;
+    int selectionIndex = newValue.selection.end;
+    int usedSubstringIndex = 0;
+    String temp = newValue.text;
+    bool isDeleted = (newTextLength-oldValue.text.length)<0;
+    final StringBuffer newText = StringBuffer();
+
+    if(newTextLength==3 && !isDeleted){
+      temp = temp.substring(0,3)+"-"+temp.substring(3,temp.length);
+    }
+    if(newTextLength==3 && isDeleted){
+      temp = temp.substring(0,2);
+    }
 
 
 
-bool hidden = true;
+
+    if(newTextLength<=7){
+      newText.write(temp);
+    }else{
+      newText.write(oldValue.text);
+    }
 
 
+    return TextEditingValue(
+      text: newText.toString(),
+      selection: TextSelection.collapsed(offset: temp.length),
+    );
+  }
+}
+final _mobileFormatter = PinTextInputFormatter();
 
 
-class RoundedPasswordField extends StatefulWidget{
+class RoundedPinField extends StatelessWidget {
   final String hintText;
 
   final int exactLines;
@@ -22,8 +53,7 @@ class RoundedPasswordField extends StatefulWidget{
   final TextInputType keyboard;
   final double maxHeight;
   final int maxCharacters;
-
-  const RoundedPasswordField({
+  const RoundedPinField({
     Key key,
     this.hintText,
     this.next,
@@ -34,53 +64,8 @@ class RoundedPasswordField extends StatefulWidget{
     this.exactLines = 1,
     this.width = 0.8,
     this.maxHeight = 0.1,
-    this.maxCharacters = 50,
-  }):super(key:key);
-
-  @override
-  State<StatefulWidget> createState() => _RoundedPasswordField(
-    key: key,
-    hintText: this.hintText,
-    next: next,
-    current: current,
-    keyboard: keyboard,
-    onChanged: onChanged,
-    resizable: resizable,
-    exactLines: exactLines,
-    width: width,
-    maxHeight: maxHeight,
-    maxCharacters: maxCharacters
-
-  );
-
-}
-
-class _RoundedPasswordField extends State<RoundedPasswordField> {
-   String hintText;
-   Key key;
-   int exactLines;
-   ValueChanged<String> onChanged;
-   FocusNode next;
-   FocusNode current;
-   bool resizable;
-   double width;
-   TextInputType keyboard;
-   double maxHeight;
-   int maxCharacters;
-
-   _RoundedPasswordField({
-    this.key,
-    this.hintText,
-    this.next,
-    this.current,
-    this.keyboard,
-    this.onChanged,
-    this.resizable = false,
-    this.exactLines = 1,
-    this.width = 0.8,
-    this.maxHeight = 0.1,
-    this.maxCharacters = 50,
-  });
+    this.maxCharacters = 18,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -98,32 +83,19 @@ class _RoundedPasswordField extends State<RoundedPasswordField> {
           child:
           TextFormField(
 
-            obscureText: hidden,
             keyboardType: keyboard,
             focusNode: current,
             textInputAction: TextInputAction.next,
             onFieldSubmitted: (term){
               _fieldFocusChange(context,current,next);
             },
-
+            inputFormatters: <TextInputFormatter>[
+              _mobileFormatter
+            ],
             maxLines: resizable ? null : exactLines,
             onChanged: onChanged,
 
             decoration: InputDecoration(
-
-              suffixIcon: IconButton(
-
-                onPressed: (){
-
-                      hidden = !hidden;
-                      setState(() {
-
-                      });
-
-                },
-                icon:Icon((hidden)?Icons.visibility:Icons.visibility_off),
-                color: Theme.of(context).primaryColor,
-              ),
 
               hintStyle: Theme.of(context).textTheme.headline2,
 

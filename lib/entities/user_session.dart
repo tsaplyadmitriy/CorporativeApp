@@ -2,13 +2,16 @@ class UserSession{
 
   String token;
   String date;
+  String emailVerified;
+  int respcode;
+  UserSession({this.token,this.date,this.emailVerified,this.respcode});
 
-  UserSession({this.token,this.date});
-
-  factory UserSession.fromJson(Map<String,dynamic> json){
+  factory UserSession.fromJson(Map<String,dynamic> json,int code){
     return new UserSession(
     token:json['accessToken'].toString(),
-     date:json['expirationDate'].toString()
+      date:json['expirationDate'].toString(),
+      emailVerified: json['emailVerified'].toString(),
+      respcode: code
   );
 
 
