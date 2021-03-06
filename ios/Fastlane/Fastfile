@@ -1,0 +1,39 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do 
+  desc "Push a new beta build to TestFlight"
+  lane :upload_to_tf do |options|
+    
+    update_code_signing_settings(use_automatic_signing: true, team_id: "HB8F5YDVNM", targets: "Runner")
+    
+    set_info_plist_value(path: "./Runner/Info.plist", key: "ITSAppUsesNonExemptEncryption", value: false)
+	
+    increment_build_number(build_number: options[:build_number])
+    increment_version_number(version_number: options[:version_number])
+    build_app(scheme: "Runner")
+      
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
+	
+  lane :rundevice do
+      enable_automatic_code_signing
+
+      build_app(scheme: "Runner")
+  end
+
+end

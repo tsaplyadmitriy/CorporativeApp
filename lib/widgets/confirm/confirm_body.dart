@@ -12,19 +12,25 @@ import 'package:lipsar_app/constants.dart';
 import 'package:lipsar_app/entities/user_entity.dart';
 import 'package:lipsar_app/entities/user_session.dart';
 import 'package:lipsar_app/main_body/main_body.dart';
+import 'package:lipsar_app/main_body/stream_preview.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:lipsar_app/widgets/confirm/recovery_hint_dialog.dart';
+import 'package:lipsar_app/widgets/login/login_screen.dart';
+
+import '../../custom_material_page_route.dart';
 
 class ConfirmBody extends StatefulWidget{
   String email;
-  String phone;
+
   String nameSurname;
   String password;
   String token;
 
-  ConfirmBody({this.email,this.phone,this.nameSurname,this.password,this.token});
+
+  ConfirmBody({this.email,this.nameSurname,this.password,this.token});
 
   @override
-  State<StatefulWidget> createState() =>  _ConfirmBody (email,phone,nameSurname,password,token);
+  State<StatefulWidget> createState() =>  _ConfirmBody (email,nameSurname,password,token);
 
 }
 
@@ -34,14 +40,16 @@ class ConfirmBody extends StatefulWidget{
 class _ConfirmBody extends State<ConfirmBody>{
 
   String email;
-  String phone;
+
   String nameSurname;
   String password;
   String token;
   String code;
+
   String errorLabel = "";
 
-  _ConfirmBody(this.email,this.phone,this.nameSurname,this.password,this.token):super();
+
+  _ConfirmBody(this.email,this.nameSurname,this.password,this.token):super();
 
   List<FocusNode> nodes = [FocusNode()];
   final  GlobalKey<AsyncLoaderState> asyncLoaderState =
@@ -56,11 +64,11 @@ class _ConfirmBody extends State<ConfirmBody>{
   String formatTimeString(int timer){
 
     if(timer>=5 ){
-      return timer.toString()+" секунд";
+      return timer.toString()+" "+"seconds1".tr();
     }else if(timer >1){
-      return timer.toString()+" секунды";
+      return timer.toString()+" "+"seconds2".tr();
     }else{
-      return timer.toString()+" секунду";
+      return timer.toString()+" "+ "seconds3".tr();
     }
 
   }
@@ -90,17 +98,17 @@ class _ConfirmBody extends State<ConfirmBody>{
        ,
       renderLoad: () => Center(child:
 
-      Text("Отправить код повторно через "+formatTimeString(timeRemaining))),
+      Text("sendagain".tr()+ formatTimeString(timeRemaining))),
 
       renderSuccess: ({data}) =>
           Center(
             child:
             InkWell(
-              onTap: (){
-
+              onTap: ()async {
+                await APIRequests().sendVerificationCode(this.token);
                 this.asyncLoaderState.currentState.reloadState();
               },
-              child:  Text("Отправить код ещё раз",style: TextStyle(
+              child:  Text("sendagain2".tr(),style: TextStyle(
                 color: constants.kPrimaryColor,
                 decoration: TextDecoration.underline,),)
 
@@ -109,10 +117,20 @@ class _ConfirmBody extends State<ConfirmBody>{
      ,
     );
 
-    return Container(
+    return
+      WillPopScope(
+          onWillPop: ()async{
+            pinFormatter.clear();
+            //TODO false flag
+            await Navigator.push(context, CustomMaterialPageRoute(
+                builder: (context) =>
+                    LoginScreen()));
+
+          },
+      child: Container(
 
       padding: EdgeInsets.only(top: size.height*0.04),
-      height: double.maxFinite,
+
 
       child: SingleChildScrollView(
 
@@ -122,17 +140,20 @@ class _ConfirmBody extends State<ConfirmBody>{
         Center(
 
           child: Text("ПОДТВЕРЖДЕНИЕ",
-              style: Theme.of(context)
-                  .textTheme
-                  .headline1),
+              style: TextStyle(
+                fontFamily: "Baloo",
+                color: Colors.grey,
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+              )),
          ),
         Align(
             alignment: Alignment.center,
                 child:Container(
-                  margin: EdgeInsets.only(top: size.width*0.05),
+                  margin: EdgeInsets.only(top: size.width*0.05,right: 10,left: 10),
                   child:
 
-                     Text("Мы отправили уникальный 6-значный код на вашу почту",
+                     Text("codesendhint".tr(),
                         textAlign: TextAlign.center,
                         style:  TextStyle(
 
@@ -151,7 +172,7 @@ class _ConfirmBody extends State<ConfirmBody>{
 
       RoundedPinField(
 
-        hintText: "Пин-код",
+        hintText: "confirmcode".tr(),
         keyboard: TextInputType.phone,
         width: 0.85,
         maxHeight: 0.07,
@@ -170,62 +191,111 @@ class _ConfirmBody extends State<ConfirmBody>{
                   alignment: Alignment.centerLeft,
                   child:Container(
 
-                    margin: EdgeInsets.only(left: size.width*0.08),
+                    margin: EdgeInsets.only(left: size.width*0.12,bottom: 5),
                     child:
-                    Text(errorLabel,style: Theme.of(context).textTheme.headline6),
+                    Text(errorLabel,style: TextStyle(
+                      fontFamily: "Baloo",
+                      color: Colors.black26,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    )),
                   )),
       RoundedButton(
-        text: "ПРОДОЛЖИТЬ",
+        text: "continue".tr(),
         textColor: Colors.white,
 
         press: () async{
 
-          if(await APIRequests().verifyEmail(code,token)){
 
-          errorLabel = "";
-          setState(() {
 
-          });
-          Navigator.push(context, MaterialPageRoute(
-              builder: (context) =>
-                  MainBody()));
-          }else{
 
-            errorLabel = "Неправильный пин-код";
+          if(code == null || code.length!=7  ){
+            errorLabel = "fullcodeerror".tr();
             setState(() {
 
             });
 
           }
+
+          else{
+            var numpin = code.substring(0,3)+code.substring(4,code.length);
+            print(numpin);
+            if(!validatePin(numpin)){
+              errorLabel = "wrongformaterror".tr();
+              setState(() {
+
+              });
+
+            }
+            else{
+
+
+
+
+
+          if(await APIRequests().verifyEmail(numpin,token)){
+
+                errorLabel = "";
+                pinFormatter.clear();
+                code  ="";
+                setState(() {
+
+                });
+
+            Navigator.push(context, CustomMaterialPageRoute(
+                builder: (context) =>
+                    new StreamPreview(
+                      token: token,
+                    )));
+          }
+
+          else{
+
+            errorLabel = "wrongcode".tr();
+            setState(() {
+
+            });
+
+          }
+
+
+        }
+
+        }
         },
       ),
 
-      Align(
-
-          alignment: Alignment.centerLeft,
-          child:Container(
-              margin: EdgeInsets.only(left: size.width*0.1),
-              child:
-              InkWell(
-                  onTap: ()async {
-                    await showDialog(
-                        context: context,
-                        builder: (BuildContext buildContext) =>
-                            RecoveryHintDialog());
-
-
-
-                  },
-                  child: Text("Не приходит код подтверждения?",
-
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3,)
-              ))
-      ),
-    ])));
+      // Align(
+      //
+      //     alignment: Alignment.centerLeft,
+      //     child:Container(
+      //         margin: EdgeInsets.only(left: size.width*0.1),
+      //         child:
+      //         InkWell(
+      //             onTap: ()async {
+      //               await showDialog(
+      //                   context: context,
+      //                   builder: (BuildContext buildContext) =>
+      //                       RecoveryHintDialog());
+      //
+      //
+      //
+      //             },
+      //             child: Text("Не приходит код подтверждения?",
+      //
+      //               style: Theme.of(context)
+      //                   .textTheme
+      //                   .headline3,)
+      //         ))
+      // ),
+    ]))));
   }
 
 
+  bool validatePin(String pin){
+    return RegExp(r"^\d+$").hasMatch(pin) ;
+
+
+  }
 
 }

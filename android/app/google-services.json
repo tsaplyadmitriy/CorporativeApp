@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1090326532717",
+    "project_id": "tronicshow-9e0b1",
+    "storage_bucket": "tronicshow-9e0b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1090326532717:android:dbc44676c2283ab505e564",
+        "android_client_info": {
+          "package_name": "app.tronic.show"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1090326532717-f8fii9vkqsud3aqq6flnbk8fi9ipksid.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtHum5k16QSQnoXQGFlZzwIwY0Y5d43t0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1090326532717-f8fii9vkqsud3aqq6flnbk8fi9ipksid.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

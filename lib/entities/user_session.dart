@@ -2,7 +2,7 @@ class UserSession{
 
   String token;
   String date;
-  String emailVerified;
+  bool emailVerified;
   int respcode;
   UserSession({this.token,this.date,this.emailVerified,this.respcode});
 
@@ -10,7 +10,7 @@ class UserSession{
     return new UserSession(
     token:json['accessToken'].toString(),
       date:json['expirationDate'].toString(),
-      emailVerified: json['emailVerified'].toString(),
+      emailVerified: json['emailVerified'],
       respcode: code
   );
 

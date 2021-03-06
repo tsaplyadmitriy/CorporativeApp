@@ -8,34 +8,62 @@ import 'package:lipsar_app/components/rounded_input_field.dart';
 import 'package:lipsar_app/components/rounded_password_field.dart';
 import 'package:lipsar_app/components/rounded_phone_field.dart';
 import 'package:lipsar_app/constants.dart';
+import 'package:lipsar_app/entities/regex.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:lipsar_app/entities/user_entity.dart';
 import 'package:lipsar_app/entities/user_session.dart';
 import 'package:lipsar_app/main_body/main_body.dart';
+import 'package:lipsar_app/session_keeper.dart';
+import 'package:lipsar_app/widgets/confirm/confirm_screen.dart';
 import 'package:lipsar_app/widgets/recovery/recovery_screen.dart';
 import 'package:lipsar_app/widgets/signup/signup_screen.dart';
+import 'package:lipsar_app/widgets/splash_flags.dart';
+import 'package:lipsar_app/widgets/splash_screen_login.dart';
+
+import '../../custom_material_page_route.dart';
+import '../../main.dart';
 
 
 
 class LoginBody extends StatefulWidget{
 
+  String errorLabel;
+  LoginBody({this.errorLabel});
   @override
-  State<StatefulWidget> createState() =>_LoginBody();
+  State<StatefulWidget> createState() =>_LoginBody(errorLabel: errorLabel);
 
 
 }
 
 class _LoginBody extends State<LoginBody>{
 
-  String phone = "DefaultPhone";
+  String email = "DefaultEmail";
   String password = "DefaultPassword";
   String errorLabel = "";
+  var mailController = new TextEditingController();
+
   List<FocusNode> nodes = [FocusNode(),FocusNode()];
+
+  _LoginBody({this.errorLabel});
+
+  @override
+  void initState() {
+    super.initState();
+    if(SessionKeeper.email!=""){
+      mailController.text = SessionKeeper.email;
+      email = SessionKeeper.email;
+    }
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.only(top: size.height*0.04),
-     height: double.maxFinite,
+      //height: size.height,
+     // padding: EdgeInsets.only(top: size.height*0.04),
+
 
       child: SingleChildScrollView(
 
@@ -44,128 +72,170 @@ class _LoginBody extends State<LoginBody>{
         children: <Widget>[
           Center(
 
-              child: Text("ДОБРО ПОЖАЛОВАТЬ!",
-                  style: Theme.of(context)
-                  .textTheme
-                  .headline1),
+              child: Text("hello",
+                  style: TextStyle(
+                    fontFamily: "Baloo",
+                    color: Colors.grey,
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                  )).tr(context:context),
           ),
 
 
-          SizedBox(height: size.height*0.1,),
-          RoundedPhoneField(
+          //SizedBox(height: size.height*0.01,),
+          RoundedInputField(
 
-            hintText: "Телефон",
-            keyboard: TextInputType.phone,
+            hintText: "emailhint".tr(),
+
+            keyboard: TextInputType.emailAddress,
             width: 0.85,
             maxHeight: 0.07,
             maxCharacters: 30,
             next: nodes[1],
             current: nodes[0],
-            onChanged: (phone){
-              this.phone = phone;
+            controller: mailController,
+            onChanged: (email){
+              setState(() {
+                this.email = email;
+              });
+
             },
 
           ),
+          SizedBox(height: size.height*0.01,),
           RoundedPasswordField(
 
-            hintText: "Пароль",
+            hintText: "passhint".tr(),
             keyboard: TextInputType.visiblePassword,
             width: 0.85,
             maxHeight: 0.07,
             maxCharacters: 30,
             current: nodes[1],
+
             onChanged: (pass){
-              this.password = pass;
+              setState(() {
+                this.password = pass;
+              });
             },
 
           ),
 
-          SizedBox(height: size.height*0.01,),
+          SizedBox(height: size.height*0.02,),
+
           Align(
 
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.center,
+              child:Container(
+                  //margin: EdgeInsets.only(bottom: size.width*0.03),
+                  child:
+                  InkWell(
+                      onTap: (){
+
+
+                        Navigator.push(context,CustomMaterialPageRoute(
+                            builder: (context) => RecoveryScreen()
+                        )
+                        );
+
+
+                      },
+                      child: Text("forgotpass".tr(),
+
+                        style:TextStyle(
+                          fontFamily: "Baloo",
+                          color: Colors.grey,
+                          fontSize: 18,
+                          fontWeight: FontWeight.normal,
+                          decoration: TextDecoration.underline,
+
+                        ),)
+                  ))
+          ),
+          //SizedBox(height: 5,),
+          Align(
+
+              alignment: Alignment.center,
               child:Container(
 
-                margin: EdgeInsets.only(left: size.width*0.08),
+                margin: EdgeInsets.only(bottom: size.width*0.02),
                 child:
-                Text(errorLabel,style: Theme.of(context).textTheme.headline6),
+                Text(errorLabel,style: TextStyle(
+                  fontFamily: "Baloo",
+                  color: Colors.black26,
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                )),
               )),
+
+          //SizedBox(height: 5,),
           RoundedButton(
-            text: "ВОЙТИ",
+            text: "login".tr(),
             textColor: Colors.white,
 
             press: () async{
+              SplashFlags.isSplashActive = true;
 
-              UserSession userSession = await APIRequests().loginUser(this.phone, this.password);
-              print(userSession.respcode);
-              if(userSession.respcode==401){
-                errorLabel = "Неправильный логин или пароль";
-                setState(() {
-
-                });
-              }
-              if(userSession.respcode==200){
-                errorLabel="";
-                print("token: "+userSession.token);
-                setState(() {
-
-                });
-                Navigator.push(context, MaterialPageRoute(
+              if(validateEmail(this.email)) {
+                SessionKeeper.email = this.email;
+                Navigator.push(context, CustomMaterialPageRoute(
                     builder: (context) =>
-                        MainBody()));
+                        SplashScreenLogin(
+                          email: this.email,
+                          password: this.password,
+                          onSuccess: (token) {
+                            errorLabel = " ";
+                            setState(() {});
+                          },
+                          onVerify: (token) async{
+                            await APIRequests().sendVerificationCode(token);
+                            Navigator.push(context, CustomMaterialPageRoute(
+                                builder: (context) =>
+                                    ConfirmScreen(token: token,)));
+                          },
+                          onError: () {
+                            errorLabel = "loginerror".tr();
+                            setState(() {});
+                          },
+
+                        )));
+              }else{
+                errorLabel = "mailerror".tr();
+                setState(() {});
               }
+
 
             },
           ),
-
+          //SizedBox(height: 5),
           Align(
 
-            alignment: Alignment.centerLeft,
+              alignment: Alignment.center,
               child:Container(
-                margin: EdgeInsets.only(left: size.width*0.1),
+
+                margin: EdgeInsets.only(bottom: size.width*0.015),
                 child:
-                InkWell(
-                onTap: (){
+                Text("firsttime".tr(),style: TextStyle(
+                  fontFamily: "Baloo",
+                  fontWeight: FontWeight.normal,
+                  color: Colors.grey,
+                  fontSize: 18,
+                )),
+              )),
 
 
-                  Navigator.push(context,MaterialPageRoute(
-                      builder: (context) => RecoveryScreen()
-                  )
-                  );
 
-
-                },
-                 child: Text("Забыли пароль?",
-
-                    style: Theme.of(context)
-                      .textTheme
-                      .headline3,)
-              ))
+          RoundedButton(
+            text: "signup".tr(),
+            textColor: constants.accentColor,
+            color: Colors.white,
+            press: (){
+              Navigator.push(context,CustomMaterialPageRoute(
+                  builder: (context) => SignUpScreen()
+              )
+              );
+            },
           ),
-          SizedBox(height: size.height*0.015,),
 
-          Align(
-
-              alignment: Alignment.centerLeft,
-              child:Container(
-
-                  margin: EdgeInsets.only(left: size.width*0.1),
-                  child:
-                  InkWell(
-                    onTap: (){
-                        Navigator.push(context,MaterialPageRoute(
-                          builder: (context) => SignUpScreen()
-                         )
-                        );
-
-                    },
-                  child:Text("Регистрация",
-
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3,)
-              ))
-          ),
 
         ],
 
@@ -175,6 +245,8 @@ class _LoginBody extends State<LoginBody>{
   }
 
 
-
+  bool validateEmail(String email){
+    return  RegExp(r""+regexes[RegexType.EMAIL]).hasMatch(email);
+  }
 
 }

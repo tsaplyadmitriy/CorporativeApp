@@ -1,44 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lipsar_app/components/textfield_container.dart';
+import 'package:lipsar_app/constants.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-class PinTextInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue
-      ) {
-    final int newTextLength = newValue.text.length;
-    int selectionIndex = newValue.selection.end;
-    int usedSubstringIndex = 0;
-    String temp = newValue.text;
-    bool isDeleted = (newTextLength-oldValue.text.length)<0;
-    final StringBuffer newText = StringBuffer();
+//var  pinFormatter = new MaskTextInputFormatter
+  //(mask: '###-###', filter: { "#": RegExp(r'[0-9]') },initialText: "");
 
-    if(newTextLength==3 && !isDeleted){
-      temp = temp.substring(0,3)+"-"+temp.substring(3,temp.length);
-    }
-    if(newTextLength==3 && isDeleted){
-      temp = temp.substring(0,2);
-    }
-
-
-
-
-    if(newTextLength<=7){
-      newText.write(temp);
-    }else{
-      newText.write(oldValue.text);
-    }
-
-
-    return TextEditingValue(
-      text: newText.toString(),
-      selection: TextSelection.collapsed(offset: temp.length),
-    );
-  }
-}
-final _mobileFormatter = PinTextInputFormatter();
+var   pinFormatter =  new MaskTextInputFormatter
+  (mask: '###-###', filter: { "#": RegExp(r'[0-9]') });
 
 
 class RoundedPinField extends StatelessWidget {
@@ -53,7 +23,7 @@ class RoundedPinField extends StatelessWidget {
   final TextInputType keyboard;
   final double maxHeight;
   final int maxCharacters;
-  const RoundedPinField({
+   RoundedPinField({
     Key key,
     this.hintText,
     this.next,
@@ -67,11 +37,15 @@ class RoundedPinField extends StatelessWidget {
     this.maxCharacters = 18,
   }) : super(key: key);
 
+
+
   @override
   Widget build(BuildContext context) {
+
+
     Size size = MediaQuery.of(context).size; // h and w of screen
     return Container(
-      width: size.width * width,
+      width: (size.width>300)?300:size.width*width,
       child: TextFieldContainer(
 
         child: ConstrainedBox(
@@ -83,6 +57,7 @@ class RoundedPinField extends StatelessWidget {
           child:
           TextFormField(
 
+
             keyboardType: keyboard,
             focusNode: current,
             textInputAction: TextInputAction.next,
@@ -90,14 +65,18 @@ class RoundedPinField extends StatelessWidget {
               _fieldFocusChange(context,current,next);
             },
             inputFormatters: <TextInputFormatter>[
-              _mobileFormatter
+              pinFormatter
             ],
             maxLines: resizable ? null : exactLines,
             onChanged: onChanged,
 
             decoration: InputDecoration(
 
-              hintStyle: Theme.of(context).textTheme.headline2,
+              hintStyle: TextStyle(
+                fontWeight: FontWeight.normal,
+                color: constants.kPrimaryColor,
+                fontSize: 18,
+              ),
 
               hintText: hintText,
               border: InputBorder.none,

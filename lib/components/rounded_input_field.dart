@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lipsar_app/components/textfield_container.dart';
-
+import 'package:lipsar_app/constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RoundedInputField extends StatelessWidget {
   final String hintText;
 
   final int exactLines;
+  final TextEditingController controller;
   final ValueChanged<String> onChanged;
   final FocusNode next;
   final FocusNode current;
@@ -18,6 +20,7 @@ class RoundedInputField extends StatelessWidget {
   const RoundedInputField({
     Key key,
     this.hintText,
+    this.controller,
     this.next,
     this.current,
     this.keyboard,
@@ -33,7 +36,7 @@ class RoundedInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size; // h and w of screen
     return Container(
-      width: size.width * width,
+      width: (size.width>300)?300:size.width*width,
       child: TextFieldContainer(
         child: ConstrainedBox(
 
@@ -42,12 +45,19 @@ class RoundedInputField extends StatelessWidget {
             maxHeight: size.height * maxHeight,
           ),
           child: TextFormField(
+            controller: controller ,
             keyboardType: keyboard,
             focusNode: current,
+
             textInputAction: TextInputAction.next,
+
             onFieldSubmitted: (term){
               _fieldFocusChange(context,current,next);
             },
+
+            style: TextStyle(color: constants.kPrimaryColor),
+
+
             inputFormatters: <TextInputFormatter>[
              //_mobileFormatter
             ],
@@ -55,9 +65,13 @@ class RoundedInputField extends StatelessWidget {
             onChanged: onChanged,
             decoration: InputDecoration(
 
-              hintStyle: Theme.of(context).textTheme.headline2,
+              hintStyle: TextStyle(
+                fontWeight: FontWeight.normal,
+                color: constants.kPrimaryColor,
+                fontSize: 18,
+              ),
 
-              hintText: hintText,
+              hintText: hintText.tr(),
               border: InputBorder.none,
             ),
           ),

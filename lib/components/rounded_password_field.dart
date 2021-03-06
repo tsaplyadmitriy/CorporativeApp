@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lipsar_app/components/textfield_container.dart';
-
+import 'package:lipsar_app/constants.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 
@@ -86,7 +87,7 @@ class _RoundedPasswordField extends State<RoundedPasswordField> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size; // h and w of screen
     return Container(
-      width: size.width * width,
+      width: (size.width>300)?300:size.width*width,
       child: TextFieldContainer(
 
         child: ConstrainedBox(
@@ -97,7 +98,7 @@ class _RoundedPasswordField extends State<RoundedPasswordField> {
           ),
           child:
           TextFormField(
-
+            style: TextStyle(color: constants.kPrimaryColor),
             obscureText: hidden,
             keyboardType: keyboard,
             focusNode: current,
@@ -125,9 +126,13 @@ class _RoundedPasswordField extends State<RoundedPasswordField> {
                 color: Theme.of(context).primaryColor,
               ),
 
-              hintStyle: Theme.of(context).textTheme.headline2,
+              hintStyle: TextStyle(
+                fontWeight: FontWeight.normal,
+                color: constants.kPrimaryColor,
+                fontSize: 18,
+              ),
 
-              hintText: hintText,
+              hintText: hintText.tr(),
               border: InputBorder.none,
             ),
           ),

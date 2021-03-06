@@ -8,13 +8,16 @@ import 'package:lipsar_app/widgets/login/login_body.dart';
 class LoginScreen extends StatelessWidget{
 
 
-
+  String errorLabel = " ";
+  bool isLogout;
+  LoginScreen({this.errorLabel,this.isLogout});
   @override
   Widget build(BuildContext context) {
 
     return BaseScreen(
-      isReturnable: false,
-      child: LoginBody(),
+      isLogout: this.isLogout,
+      isReturnable: true,
+      child: LoginBody(errorLabel: (errorLabel!=null)?errorLabel:" ",),
     );
   }
 

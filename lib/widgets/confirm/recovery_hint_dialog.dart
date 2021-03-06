@@ -71,7 +71,7 @@ class RecoveryHintDialog extends StatelessWidget{
                     text: "Позвонить",
                     press: (){
                       print("text");
-                      launch('tel://+79370051735');
+                      launch('tel://+79370000000');
 
                     },
 
